@@ -9,13 +9,31 @@ import { PersonService } from '../person.service';
 })
 export class HomeComponent implements OnInit{
   list:Person[] = [];
+  selected:Person|null = null;
 
   constructor(private personService:PersonService){}
 
   ngOnInit(): void {
     
     this.personService.fetchAll().subscribe(data => this.list = data);
-    
+
+  }
+
+  select(person:Person){
+    if(this.selected == person) {
+      this.selected = null;
+    } else {
+      this.selected = person;
+    }
+  }
+
+  deleteSelected() {
+    if(this.selected) {
+      this.personService.delete(this.selected).subscribe(() => {
+        this.list = this.list.filter(item => item != this.selected);
+        this.selected = null;
+      });
+    }
   }
 
 }
